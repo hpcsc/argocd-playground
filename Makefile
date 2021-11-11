@@ -1,16 +1,12 @@
-.PHONY: minikube-manifest install uninstall server-url admin-password
+.DEFAULT_GOAL := help
 
-minikube-manifest:
-	kustomize build ./install/overlays/minikube
+SHELL = bash
 
-install:
-	kustomize build ./install/overlays/minikube | kubectl apply -f -
+include app/Makefile
+include kubernetes/app/Makefile
+include kubernetes/argocd/Makefile
 
-uninstall:
-	kustomize build ./install/overlays/minikube | kubectl delete -f -
-
-server-url:
-	echo "https://$(shell minikube ip):32032"
-
-admin-password:
-	kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+##@ Help
+.PHONY: help
+help:  ## Display this help.
+	./scripts/list-make-targets.sh $(MAKEFILE_LIST)

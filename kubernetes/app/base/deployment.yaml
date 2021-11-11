@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-playground-app
+spec:
+  selector:
+    matchLabels:
+      app: argocd-playground-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: argocd-playground-app
+    spec:
+      containers:
+      - name: argocd-playground-app
+        image: argocd-playground-app
+        ports:
+        - containerPort: 8888
+        envFrom:
+        - configMapRef:
+            name: argocd-playground-app-config
