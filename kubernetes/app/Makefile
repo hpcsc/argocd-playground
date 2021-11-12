@@ -1,19 +1,35 @@
 KUBERNETES_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 ##@ Application kubernetes manifests
-.PHONY: build-staging-manifests build-prod-manifests deploy-staging deploy-prod
+.PHONY: render-staging render-prod deploy-staging deploy-prod require-tag
 
-set-image-tag: ## Set kustomize image tag
-	pushd ${KUBERNETES_DIR}/base && kustomize edit set image argocd-playground-app=ghcr.io/hpcsc/argocd-playground-app:$(TAG)
+render-staging:	## Render helm chart locally using staging values.yaml
+	pushd ${KUBERNETES_DIR} && helm template test-release -f ./values.staging.yaml ./chart
 
-build-staging-manifests: ## Build kustomize for staging environment
-	kustomize build ${KUBERNETES_DIR}/overlays/staging
+deploy-staging: require-tag ## Install helm chart using staging values.yaml
+	pushd ${KUBERNETES_DIR} && \
+		helm upgrade --install \
+					 -f ./values.staging.yaml \
+					 --set-string image.tag=${TAG} \
+					 --wait \
+					 -n test \
+					 argocd-playground-app \
+					 ./chart
 
-build-prod-manifests: ## Build kustomize for production environment
-	kustomize build ${KUBERNETES_DIR}/overlays/prod
+deploy-prod: require-tag ## Install helm chart using production values.yaml
+	pushd ${KUBERNETES_DIR} && \
+		helm upgrade --install \
+					 -f ./values.prod.yaml \
+					 --set-string image.tag=${TAG} \
+					 --wait \
+					 -n test \
+					 argocd-playground-app \
+					 ./chart
 
-deploy-staging: ## Build kustomize manifests and apply them in staging environment
-	kustomize build ${KUBERNETES_DIR}/overlays/staging | kubectl apply -f -
+render-prod:	## Render helm chart locally using production values.yaml
+	pushd ${KUBERNETES_DIR} && helm template test-release -f ./values.prod.yaml ./chart
 
-deploy-prod: ## Build kustomize manifests and apply them in production environment
-	kustomize build ${KUBERNETES_DIR}/overlays/prod | kubectl apply -f -
+require-tag:
+ifndef TAG
+	$(error TAG variable is required)
+endif

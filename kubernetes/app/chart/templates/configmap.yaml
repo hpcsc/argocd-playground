@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-playground-app-config-{{ .Values.environment }}
+data:
+  key: value
+  ENVIRONMENT: {{ .Values.environment }}

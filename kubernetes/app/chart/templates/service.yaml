@@ -2,12 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: argocd-playground-app
+  labels:
+    environment: {{ .Values.environment }}
 spec:
   ports:
     - name: http
       port: 8888
       targetPort: 8888
-      nodePort: 30099
+      nodePort: {{ .Values.service.nodePort }}
   selector:
     app: argocd-playground-app
   type: NodePort

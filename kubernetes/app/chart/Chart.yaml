@@ -1,0 +1,7 @@
+apiVersion: v1
+name: argocd-playground-app
+description: A Helm chart for argocd-playground-app
+
+type: application
+
+version: 0.1.0

@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-playground-app-staging
+  namespace: argocd
+spec:
+  project: argocd-playground
+  source:
+    repoURL: https://github.com/hpcsc/argocd-playground.git
+    targetRevision: HEAD
+    path: kubernetes/app/chart
+
+    helm:
+      parameters:
+      - name: "image.tag"
+        value: "placeholder"
+        forceString: true
+
+      releaseName: argocd-playground-app-staging
+
+      valueFiles:
+      - ../values.staging.yaml
+
+      version: v2
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd-playground-app-staging

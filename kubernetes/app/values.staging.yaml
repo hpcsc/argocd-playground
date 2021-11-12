@@ -1,0 +1,10 @@
+replicaCount: 1
+
+environment: staging
+
+image:
+  repository: ghcr.io/hpcsc/argocd-playground-app
+  tag: ""
+
+service:
+  nodePort: 30099
