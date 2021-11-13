@@ -17,3 +17,6 @@ build-docker: ## Build docker image
 
 push-docker: ## Push docker image
 	docker push ${IMAGE}:${TAG}
+
+smoke-test: ## Run smoke test against deployed application
+	./scripts/smoke-test.sh $(shell minikube ip):30099 ${TAG}
