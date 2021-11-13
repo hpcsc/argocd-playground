@@ -1,0 +1,6 @@
+.PHONY: require-tag
+
+require-tag:
+ifndef TAG
+	$(error TAG variable is required)
+endif

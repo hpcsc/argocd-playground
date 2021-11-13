@@ -12,11 +12,11 @@ run: ## Run application locally (require Go installed in host machine)
 run-watch: ## Build docker image, run in local cluster and watch for changes using skaffold
 	skaffold dev --trigger=manual
 
-build-docker: ## Build docker image
+build-docker: require-tag ## Build docker image
 	cd ${APP_DIR} && docker build -t ${IMAGE}:${TAG} .
 
-push-docker: ## Push docker image
+push-docker: require-tag ## Push docker image
 	docker push ${IMAGE}:${TAG}
 
-smoke-test: ## Run smoke test against deployed application
+smoke-test: require-tag ## Run smoke test against deployed application
 	./scripts/smoke-test.sh $(shell minikube ip):30099 ${TAG}

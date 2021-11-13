@@ -2,6 +2,7 @@
 
 SHELL = bash
 
+include Makefile.utilities
 include app/Makefile
 include argocd/Makefile
 include bootstrap/argocd/Makefile
