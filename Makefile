@@ -3,8 +3,7 @@
 SHELL = bash
 
 include app/Makefile
-include kubernetes/app/Makefile
-include kubernetes/argocd/Makefile
+include bootstrap/argocd/Makefile
 
 ##@ Help
 .PHONY: help
