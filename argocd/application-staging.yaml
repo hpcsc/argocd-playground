@@ -6,22 +6,10 @@ metadata:
 spec:
   project: argocd-playground
   source:
-    repoURL: https://github.com/hpcsc/argocd-playground.git
+    repoURL: https://github.com/hpcsc/argocd-playground-manifest.git
     targetRevision: HEAD
-    path: kubernetes/app/chart
+    path: kustomize/overlays/staging
 
-    helm:
-      parameters:
-      - name: "image.tag"
-        value: "placeholder"
-        forceString: true
-
-      releaseName: argocd-playground-app-staging
-
-      valueFiles:
-      - ../values.staging.yaml
-
-      version: v2
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd-playground-app-staging
