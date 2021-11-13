@@ -1,16 +1,16 @@
-ARGOCD_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+BOOTSTRAP_ARGOCD_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-##@ ArgoCD
+##@ Bootstrap ArgoCD
 .PHONY: minikube-manifest install uninstall server-url admin-password
 
 minikube-manifest: ## Kustomize build to generate manifest for ArgoCD installation
-	pushd ${ARGOCD_DIR} && kustomize build ./overlays/minikube
+	pushd ${BOOTSTRAP_ARGOCD_DIR} && kustomize build ./overlays/minikube
 
 install: ## Install ArgoCD using kustomize
-	pushd ${ARGOCD_DIR} && kustomize build ./overlays/minikube | kubectl apply -f -
+	pushd ${BOOTSTRAP_ARGOCD_DIR} && kustomize build ./overlays/minikube | kubectl apply -f -
 
 uninstall: ## Uninstall ArgoCD
-	pushd ${ARGOCD_DIR} && kustomize build ./overlays/minikube | kubectl delete -f -
+	pushd ${BOOTSTRAP_ARGOCD_DIR} && kustomize build ./overlays/minikube | kubectl delete -f -
 
 server-url: ## Show URL to ArgoCD server
 	@echo "https://$(shell minikube ip):32032"

@@ -3,6 +3,7 @@
 SHELL = bash
 
 include app/Makefile
+include argocd/Makefile
 include bootstrap/argocd/Makefile
 
 ##@ Help
