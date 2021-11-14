@@ -1,4 +1,5 @@
 ARGOCD_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+ARGOCD_SERVER_URL ?= $(shell minikube ip):32032
 
 ##@ ArgoCD
 .PHONY: login-argocd-server sync-staging
@@ -8,6 +9,6 @@ login-argocd-server: ## Login to local ArgoCD server
 	@argocd login $(shell minikube ip):32032 --username admin --password ${PASS}
 
 sync-staging: ## Sync staging application
-	pushd ${ARGOCD_DIR} && \
-		argocd app sync argocd-playground-app-staging && \
-		argocd app wait argocd-playground-app-staging
+	@pushd ${ARGOCD_DIR} && \
+		argocd app sync argocd-playground-app-staging --insecure --server ${ARGOCD_SERVER_URL} --auth-token ${ARGOCD_TOKEN} && \
+		argocd app wait argocd-playground-app-staging --insecure --server ${ARGOCD_SERVER_URL} --auth-token ${ARGOCD_TOKEN}
