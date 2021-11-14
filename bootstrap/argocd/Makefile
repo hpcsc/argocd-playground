@@ -17,3 +17,6 @@ server-url: ## Show URL to ArgoCD server
 
 admin-password: ## Show password for admin user
 	@kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+generate-token: ## Generate token for account `github-actions`
+	argocd account generate-token -a github-actions
