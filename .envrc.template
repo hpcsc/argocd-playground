@@ -2,3 +2,4 @@ export GITHUB_TOKEN=placeholder
 export MANIFEST_REPO_TOKEN=placeholder
 export ARGOCD_TOKEN=placeholder
 export ARGOCD_SERVER_URL=url-to-argocd-server-in-local-cluster
+export STAGING_SERVER_URL=url-to-staging-application

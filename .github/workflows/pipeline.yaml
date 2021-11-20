@@ -96,7 +96,9 @@ jobs:
         with:
           path: argocd-playground
 
-      - uses: clowdhaus/argo-cd-action/@main
+      - name: Setup argocd CLI
+        uses: clowdhaus/argo-cd-action/@main
+        if: ${{ env.ACT == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -112,3 +114,12 @@ jobs:
         env:
           ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
           ARGOCD_SERVER_URL: ${{ secrets.ARGOCD_SERVER_URL }}
+
+      - name: Run smoke test
+        working-directory: argocd-playground
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          make smoke-test
+        env:
+          SERVER_URL: ${{ secrets.STAGING_SERVER_URL }}
+          TAG: ${GITHUB_SHA}

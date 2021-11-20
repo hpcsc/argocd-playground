@@ -15,4 +15,4 @@ help:  ## Display this help.
 ##@ Github Actions
 .PHONY: act
 act:  ## Run github actions workflow locally using act
-	act -s MANIFEST_REPO_TOKEN -s GITHUB_TOKEN -s ARGOCD_TOKEN -s ARGOCD_SERVER_URL
+	act -s MANIFEST_REPO_TOKEN -s GITHUB_TOKEN -s ARGOCD_TOKEN -s ARGOCD_SERVER_URL -s STAGING_SERVER_URL
