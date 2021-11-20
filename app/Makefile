@@ -18,5 +18,11 @@ build-docker: require-tag ## Build docker image
 push-docker: require-tag ## Push docker image
 	docker push ${IMAGE}:${TAG}
 
+update-commit: require-commit ## Set commit field in version.json
+	cd ${APP_DIR} && COMMIT=${COMMIT} ./scripts/update-commit.sh
 smoke-test: require-tag ## Run smoke test against deployed application
 	./scripts/smoke-test.sh $(shell minikube ip):30099 ${TAG}
+require-commit:
+ifndef COMMIT
+	$(error COMMIT variable is required)
+endif

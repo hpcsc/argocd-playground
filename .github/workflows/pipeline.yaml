@@ -23,6 +23,13 @@ jobs:
         run: |
           make test
 
+      - name: Update version.json
+        working-directory: argocd-playground
+        run: |
+          make update-commit
+        env:
+          COMMIT: ${GITHUB_SHA}
+
       - name: Build docker image
         working-directory: argocd-playground
         run: |
