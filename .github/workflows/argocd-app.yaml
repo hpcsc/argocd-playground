@@ -1,0 +1,34 @@
+name: Apply ArgoCD Application Manifest
+on:
+  push:
+    paths:
+      - 'argocd/manifest/*'
+
+jobs:
+  apply:
+    name: Apply
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out
+        if: ${{ env.ACT == 'true' }}
+        uses: actions/checkout@v2
+
+      - name: Setup kubectl using asdf
+        if: ${{ env.ACT == 'true' }}
+        uses: asdf-vm/actions/install@v1
+        with:
+          tool_versions: kubectl 1.22.4
+
+      - name: Write kubernetes config from secrets
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          echo "${BASE64_KUBE_CONFIG}" | base64 -d > ./argocd/.kube.config
+        env:
+          BASE64_KUBE_CONFIG: ${{ secrets.BASE64_KUBE_CONFIG }}
+
+      - name: Apply
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          make apply-argocd-app-manifest
+        env:
+          KUBECONFIG: ./.kube.config

@@ -15,4 +15,4 @@ help:  ## Display this help.
 ##@ Github Actions
 .PHONY: act
 act:  ## Run github actions workflow locally using act
-	act --secret-file .env
+	act -W ./.github/workflows/cd.yaml --secret-file .env

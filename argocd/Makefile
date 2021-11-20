@@ -4,6 +4,9 @@ ARGOCD_SERVER_URL ?= $(shell minikube ip):32032
 ##@ ArgoCD
 .PHONY: login-argocd-server sync-staging
 
+apply-argocd-app-manifest: ## Apply ArgoCD application and project manifest
+	cd ${ARGOCD_DIR} && kubectl apply -f ./manifest
+
 login-argocd-server: ## Login to local ArgoCD server
 	$(eval PASS = $(shell kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d))
 	@argocd login $(shell minikube ip):32032 --username admin --password ${PASS}
