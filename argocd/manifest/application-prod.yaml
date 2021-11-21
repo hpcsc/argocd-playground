@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-playground-app-prod
+  namespace: argocd
+spec:
+  project: argocd-playground
+  source:
+    repoURL: https://github.com/hpcsc/argocd-playground-manifest.git
+    targetRevision: HEAD
+    path: kustomize/overlays/prod
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd-playground-app-prod
