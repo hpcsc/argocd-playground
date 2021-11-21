@@ -25,3 +25,6 @@ spec:
     kind: LimitRange
   - group: ''
     kind: NetworkPolicy
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
