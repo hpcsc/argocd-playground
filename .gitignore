@@ -1,1 +1,2 @@
-.env
+.env.argocd-app
+.env.cd
