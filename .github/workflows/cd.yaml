@@ -110,8 +110,9 @@ jobs:
         working-directory: argocd-playground
         if: ${{ env.ACT == 'true' }}
         run: |
-          make sync-staging
+          make sync
         env:
+          ARGOCD_APP_NAME: argocd-playground-app-staging
           ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
           ARGOCD_SERVER_URL: ${{ secrets.ARGOCD_SERVER_URL }}
 
@@ -122,4 +123,44 @@ jobs:
           make smoke-test
         env:
           SERVER_URL: ${{ secrets.STAGING_SERVER_URL }}
+          TAG: ${GITHUB_SHA}
+
+  deploy-prod:
+    name: Deploy to prod
+    needs: deploy-staging
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+        if: ${{ env.ACT == 'true' }}
+        with:
+          path: argocd-playground
+
+      - name: Setup argocd CLI
+        uses: clowdhaus/argo-cd-action/@main
+        if: ${{ env.ACT == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          version: 2.1.2
+          command: version
+          options: --client
+
+      - name: Sync ArgoCD prod application
+        working-directory: argocd-playground
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          make sync
+        env:
+          ARGOCD_APP_NAME: argocd-playground-app-prod
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+          ARGOCD_SERVER_URL: ${{ secrets.ARGOCD_SERVER_URL }}
+
+      - name: Run smoke test
+        working-directory: argocd-playground
+        if: ${{ env.ACT == 'true' }}
+        run: |
+          make smoke-test
+        env:
+          SERVER_URL: ${{ secrets.PROD_SERVER_URL }}
           TAG: ${GITHUB_SHA}
