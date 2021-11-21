@@ -53,73 +53,23 @@ jobs:
           TAG: ${GITHUB_SHA}
 
   staging-manifest:
-    name: Update staging manifest
+    name: Staging
+    uses: hpcsc/argocd-playground/.github/workflows/manifest-job.yaml@master
     needs: commit
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Check out manifest repo
-        uses: actions/checkout@v2
-        with:
-          repository: hpcsc/argocd-playground-manifest
-          path: argocd-playground-manifest
-          token: ${{ secrets.MANIFEST_REPO_TOKEN }}
-
-      - uses: imranismail/setup-kustomize@v1
-        with:
-          github-token: ${{ secrets.MANIFEST_REPO_TOKEN }}
-
-      - name: Update image tag
-        working-directory: argocd-playground-manifest
-        run: |
-          make set-image-tag
-        env:
-          TAG: ${GITHUB_SHA}
-
-      - name: Commit and push
-        uses: EndBug/add-and-commit@v7
-        with:
-          author_name: argocd-playground-ci
-          author_email: argocd-playground-ci@example.com
-          cwd: argocd-playground-manifest
-          message: Update image tag to ${{ github.sha }}
-          pull: NO-PULL
-          push: true
+    with:
+      tag: ${GITHUB_SHA}
+    secrets:
+      manifest_repo_token: ${{ secrets.MANIFEST_REPO_TOKEN }}
 
   deploy-staging:
-    name: Deploy to staging
+    name: Staging
+    uses: hpcsc/argocd-playground/.github/workflows/deploy-job.yaml@master
     needs: staging-manifest
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-        if: ${{ env.ACT == 'true' }}
-        with:
-          path: argocd-playground
-
-      - name: Setup argocd CLI
-        uses: clowdhaus/argo-cd-action/@main
-        if: ${{ env.ACT == 'true' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          version: 2.1.2
-          command: version
-          options: --client
-
-      - name: Sync ArgoCD staging application
-        working-directory: argocd-playground
-        if: ${{ env.ACT == 'true' }}
-        run: |
-          make sync-staging
-        env:
-          ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
-          ARGOCD_SERVER_URL: ${{ secrets.ARGOCD_SERVER_URL }}
-
-      - name: Run smoke test
-        working-directory: argocd-playground
-        if: ${{ env.ACT == 'true' }}
-        run: |
-          make smoke-test
-        env:
-          SERVER_URL: ${{ secrets.STAGING_SERVER_URL }}
-          TAG: ${GITHUB_SHA}
+    with:
+      tag: ${GITHUB_SHA}
+      argocd_app_name: argocd-playground-app-staging
+    secrets:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      argocd_token: ${{ secrets.ARGOCD_TOKEN }}
+      server_url: ${{ secrets.ARGOCD_SERVER_URL }}
+      argocd_server_url: ${{ secrets.STAGING_SERVER_URL }}
