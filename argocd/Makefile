@@ -11,7 +11,7 @@ login-argocd-server: ## Login to local ArgoCD server
 	$(eval PASS = $(shell kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d))
 	@argocd login $(shell minikube ip):32032 --username admin --password ${PASS}
 
-sync: ## Sync ArgoCD application
+sync-staging: ## Sync staging application
 	@pushd ${ARGOCD_DIR} && \
-		argocd app sync ${ARGOCD_APP_NAME} --insecure --server ${ARGOCD_SERVER_URL} --auth-token ${ARGOCD_TOKEN} && \
-		argocd app wait ${ARGOCD_APP_NAME} --insecure --server ${ARGOCD_SERVER_URL} --auth-token ${ARGOCD_TOKEN}
+		argocd app sync argocd-playground-app-staging --insecure --server ${ARGOCD_SERVER_URL} --auth-token ${ARGOCD_TOKEN} && \
+		argocd app wait argocd-playground-app-staging --insecure --server ${ARGOCD_SERVER_URL} --auth-token ${ARGOCD_TOKEN}
